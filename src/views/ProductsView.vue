@@ -1,57 +1,118 @@
 <script setup>
-import { onMounted, ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import cartMethods from '../utils/cart'
 import axios from 'axios'
-import categories from './categories.json'
-import CategoryCarusel from '../components/CategoryCarusel.vue'
 
-const router = useRouter()
-const route = useRoute()
 const isLoaded = ref(false)
 const products = ref([])
+const route = useRoute()
+const pages = ref(0)
 
-const loadData = async () => {
+const fetchProducts = async () => {
   isLoaded.value = false
   const product_req = await axios.get('http://localhost:8000/api/products', {
     params: {
+      ...route.query,
       category: route.query.category || 1
     }
   })
   products.value = product_req.data.results
+  pages.value =
+    product_req.data.count % 10 === 0
+      ? Math.floor(product_req.data.count / 10)
+      : Math.floor(product_req.data.count / 10) + 1
   isLoaded.value = true
 }
 
-onMounted(async () => {
-  await loadData()
+watch(route, async () => {
+  isLoaded.value = false
+  products.value = []
+  await fetchProducts()
 })
 
-const addQuery = async (key, value) => {
-  const query = { ...route.query }
-  query[key] = value
-  await router.push({ query })
-  loadData()
-}
+onMounted(async () => {
+  await fetchProducts()
+})
 </script>
 
 <template>
-  <!-- <CategoryCarusel /> -->
-  <div>
-    <ul v-for="category in categories" :key="category.id">
-      <li>
-        <button @click="addQuery('category', category.id)">{{ category.title }}</button>
-      </li>
-    </ul>
+  <header>
+
+  <div class="container">
+    <div class="dropdown d-flex justify-content-end my-2">
+      <a
+        class="btn btn-secondary dropdown-toggle"
+        href="#"
+        role="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Sort by
+      </a>
+
+      <ul class="dropdown-menu">
+        <li>
+          <RouterLink
+            :to="{ name: 'products', query: { ...route.query, ordering: 'price' } }"
+            class="dropdown-item"
+          >
+            Price asc
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink
+            :to="{ name: 'products', query: { ...route.query, ordering: '-price' } }"
+            class="dropdown-item"
+          >
+            Price desc
+          </RouterLink>
+        </li>
+      </ul>
+    </div>
+    <div v-if="isLoaded" class="row row-cols-4 g-2">
+      <div
+        class="card card-hover py-5 text-center container"
+        style="width: 18%"
+        v-for="product in products"
+        :key="product.id"
+      >
+        <RouterLink :to="'products/' + product.id">
+          <img :src="product.image" class="card-img-top" :alt="product.title" />
+        </RouterLink>
+        <div class="card-body">
+          <h5 class="card-title">{{ product.title }}</h5>
+          <p class="card-text">{{ product.price }}</p>
+          <button class="btn btn-primary" @click="cartMethods.addToCart(product)">
+            Add to basket
+          </button>
+        </div>
+      </div>
+      <nav class="py-4" aria-label="Page navigation example">
+        <ul class="pagination">
+          <li class="page-item" v-for="i in pages" :key="i">
+            <RouterLink
+              :to="{ name: 'products', query: { ...route.query, page: i } }"
+              class="page-link"
+              >{{ i }}</RouterLink
+            >
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div v-else>
+      <p>Loading...</p>
+    </div>
   </div>
-  <h1>Products</h1>
-  <div v-if="isLoaded">
-    <ul>
-      <li v-for="product in products" :key="product.id">
-        <img :src="product.image" :alt="product.title" />
-        <p>{{ product.title }}</p>
-      </li>
-    </ul>
-  </div>
-  <div v-else>
-    <p>Loading...</p>
-  </div>
+</header>
 </template>
+
+<style scoped>
+.template{
+  background-color: rgb(60, 226, 162);
+}
+.card-hover:hover {
+  box-shadow: 0 0 11px rgba(134, 25, 25, 0.89);
+
+}
+</style>

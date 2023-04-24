@@ -1,4 +1,21 @@
 <template>
+  <!-- <header class="p-3 text-bg-dark">
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" href="#">Home</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Products</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">About</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link disabled">Cart</a>
+    </li>
+  </ul>
+</header> -->
+
   <header class="p-3 text-bg-dark">
     <div class="container">
       <div
@@ -33,26 +50,67 @@
 
         <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
           <li><RouterLink to="/" class="nav-link px-2 text-white">Home</RouterLink></li>
-          <li><RouterLink to="/products" class="nav-link px-2 text-white">Products</RouterLink></li>
-          <li><a href="#" class="nav-link px-2 text-white">Pricing</a></li>
-          <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
-          <li><a href="#" class="nav-link px-2 text-white">About</a></li>
+          <li>
+            <div class="dropdown">
+              <a
+                class="dropdown-toggle nav-link px-2 text-white"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                >Products</a
+              >
+              <ul class="dropdown-menu">
+                <li>
+                  <RouterLink
+                    :to="{ name: 'products', query: { category: 1 } }"
+                    class="dropdown-item"
+                    >Laptops</RouterLink
+                  >
+                </li>
+                <li>
+                  <RouterLink
+                    :to="{ name: 'products', query: { category: 2 } }"
+                    class="dropdown-item"
+                    >Phones</RouterLink
+                  >
+                </li>
+                <!-- <li>
+                  <RouterLink
+                    :to="{ name: 'products', query: { category: 3 } }"
+                    class="dropdown-item"
+                    >Refrigerator</RouterLink
+                  >
+                </li> -->
+                <li>
+                  <RouterLink
+                    :to="{ name: 'products', query: { category: 4 } }"
+                    class="dropdown-item"
+                    >Smart Watches</RouterLink
+                  >
+                </li>
+                <li>
+                  <RouterLink
+                    :to="{ name: 'products', query: { category: 5 } }"
+                    class="dropdown-item"
+                    >PC-Games</RouterLink
+                  >
+                </li>
+                <li>
+                  <RouterLink
+                    :to="{ name: 'products', query: { category: 6 } }"
+                    class="dropdown-item"
+                    >Consols</RouterLink
+                  >
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li><RouterLink to="/cart" class="nav-link px-2 text-white">Basket</RouterLink></li>
+          <li><RouterLink to="/about" class="nav-link px-2 text-white">About</RouterLink></li>
         </ul>
-
-        <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-          <input
-            type="search"
-            class="form-control form-control-dark text-bg-dark"
-            placeholder="Search..."
-            aria-label="Search"
-          />
-        </form>
-
-        <div class="text-end">
-          <button type="button" class="btn btn-outline-light me-2">Login</button>
-          <button type="button" class="btn btn-primary">Sign-up</button>
-        </div>
       </div>
     </div>
   </header>
 </template>
+<script setup></script>
